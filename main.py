@@ -2,7 +2,31 @@ from random import randint, shuffle, choice
 from tkinter import *
 from tkinter import messagebox
 import pyperclip
+import json
 
+
+def search_entry():
+    global error_label
+    error_label.config(text="")
+    try:
+        with open(file="stored_passwords.json", mode="r") as file:
+            data = json.load(file)
+    except (json.decoder.JSONDecodeError, FileNotFoundError):
+        error_label.config(text="Entry Not Found!")
+        error_label.grid(row=5, column=1)
+    else:
+        website = website_input.get()
+        try:
+            email = data[website]['email']
+            password = data[website]['password']
+        except KeyError:
+            error_label.config(text="Entry Not Found!")
+            error_label.grid(row=5, column=1)
+        else:
+            user_email_input.delete(0, END)
+            password_input.delete(0, END)
+            user_email_input.insert(0, email)
+            password_input.insert(0, password)
 
 
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
@@ -19,9 +43,9 @@ def password_generator():
     numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
     symbols = ['!', '#', '$', '%', '&', '(', ')', '*', '+']
 
-    password_letters = [choice(letters) for char in range(randint(8, 10))]
-    password_symbols = [choice(symbols) for char in range(randint(2, 4))]
-    password_numbers = [choice(numbers) for char in range(randint(2, 4))]
+    password_letters = [choice(letters) for _ in range(randint(8, 10))]
+    password_symbols = [choice(symbols) for _ in range(randint(2, 4))]
+    password_numbers = [choice(numbers) for _ in range(randint(2, 4))]
     password_list = password_letters + password_symbols + password_numbers
 
     shuffle(password_list)
@@ -43,8 +67,20 @@ def store_password():
                                        message=f"Entry Details:\n\nEmail:  {user_email}\nPassword:  {password}\n\nIs "
                                                f"it ok?")
         if is_ok:
-            with open(file="stored_passwords.txt", mode="a") as file:
-                file.write(f"{website}" + " | " + f"{user_email}" + " | " + f"{password}\n")
+            json_data = {
+                website: {
+                    "email": user_email,
+                    "password": password
+                }
+            }
+            try:
+                with open(file="stored_passwords.json") as file:
+                    data = json.load(file)
+                    data.update(json_data)
+            except (json.decoder.JSONDecodeError, FileNotFoundError):
+                data = json_data
+            with open(file="stored_passwords.json", mode="w") as file:
+                json.dump(data, file, indent=4)
             website_input.delete(0, END)
             password_input.delete(0, END)
     else:
@@ -87,6 +123,8 @@ password_input = Entry(width=21)
 password_input.grid(row=3, column=1, sticky=W)
 
 # Creating and placing Buttons
+search_entry_button = Button(text="Search", command=search_entry)
+search_entry_button.grid(row=1, column=3, sticky=W)
 generate_password_button = Button(width=15, text="Generate_password", command=generate_password)
 generate_password_button.grid(row=3, column=2, sticky=W)
 add_button = Button(text="Add", width=36, command=store_password)
