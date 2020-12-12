@@ -1,11 +1,15 @@
+from random import randint, shuffle, choice
 from tkinter import *
 from tkinter import messagebox
-from random import randint, shuffle, choice
+import pyperclip
+
 
 
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 def generate_password():
-    password_input.insert(0, password_generator())
+    password = password_generator()
+    password_input.insert(0, password)
+    pyperclip.copy(password)
 
 
 def password_generator():
