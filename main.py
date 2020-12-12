@@ -114,20 +114,20 @@ password_label.grid(row=3, column=0, sticky=W)
 
 # Creating and placing Entries
 website_input = Entry(width=40)
-website_input.grid(row=1, column=1, columnspan=2, sticky=W)
+website_input.grid(row=1, column=1, sticky=W)
 website_input.focus()
 user_email_input = Entry(width=40)
-user_email_input.grid(row=2, column=1, columnspan=2, sticky=W)
+user_email_input.grid(row=2, column=1, sticky=W)
 user_email_input.insert(0, "walid.salem@example.com")
 password_input = Entry(width=21)
 password_input.grid(row=3, column=1, sticky=W)
 
 # Creating and placing Buttons
-search_entry_button = Button(text="Search", command=search_entry)
+search_entry_button = Button(text="Search", command=search_entry, width=10)
 search_entry_button.grid(row=1, column=3, sticky=W)
 generate_password_button = Button(width=15, text="Generate_password", command=generate_password)
-generate_password_button.grid(row=3, column=2, sticky=W)
-add_button = Button(text="Add", width=36, command=store_password)
+generate_password_button.grid(row=3, column=1, sticky=E)
+add_button = Button(text="Add", width=34, command=store_password)
 add_button.grid(row=4, column=1, columnspan=2, sticky=W)
 
 window.mainloop()
